@@ -61,7 +61,7 @@
 ' uncomment the following line and comment the first to use locally
 ' !include C4_Context.puml
 
-title System Context diagram for Internet Banking System
+title Диаграмма контекса
 
 Person(Пользователь, "Пользователь", "Пользователь использующий умный дом")
 System(Умный_дом, "Умный дом", "Позволяет управлять отоплением в доме и проверять температуру")
@@ -87,11 +87,99 @@ Rel(Умный_дом, База_данных, "Сохраняет/Обновля
 
 **Диаграмма контейнеров (Containers)**
 
-Добавьте диаграмму.
+```aiignore
+@startuml
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Context.puml
+' uncomment the following line and comment the first to use locally
+' !include C4_Context.puml
+
+title Диаграмма контейнеров
+
+Person(Пользователь, "Пользователь", "Пользователь использующий умный дом")
+System(Персональный_Умный_дом, "Персональный_Умный_до", "Позволяет управлять отоплением в доме и проверять температуру, добавлять новые датчики")
+System(Контроллер_умных_домов, "Контроллер_умных_домов", "Агрегирует информацию с умных домов")
+
+
+System_Ext(Датчик, "Датчик", "Датчик отслеживающий температуру помещения")
+System_Ext(Датчик_х, "Датчик_х", "Отслеживание каих лиьо контроллируемых велечин")
+System_Ext(База_данных, "База данных", "Хранит информацию о датчиках и пользователях")
+
+Rel(Пользователь, Персональный_Умный_дом, "Управление отоплением/проверка температуры/CRUD операции с датчиками")
+Rel_Neighbor(Персональный_Умный_дом, Датчик, "Получает данные о температуре")
+Rel_Neighbor(Персональный_Умный_дом, Датчик_х, "Получает данные")
+Rel(Персональный_Умный_дом, Контроллер_умных_домов, "Отправляет/Получает необходимые данные")
+Rel(Контроллер_умных_домов, База_данных, "Сохраняет/Обновляет/Получает информацию о датчиках/умных домах")
+@enduml
+```
+
+```markdown
+[PlantUml_Container_diagram_C4](https://uml.planttext.com/plantuml/png/hPN1Jjj048RlVefjBWK9uajFFI7HtjeAKN6sGk8cbXmRsHi1jq2QLXK8Mgcd7gWgrBiRS0aa3gym-qRzPvqOnmaHaQf8IJoxC_FDlpFhZL1M0jbgkiOpnwkwhPej6bBkXIzDCwZib-kERBHsMw4TL7rFsfuiL_sckUTMFFPP3sNDTNRDpHVhMspQUVl6R5P2QGSmMPliSI3BUnpzkMXvS6qYX90DMtpmNTVVTxowS1tF5XMl9gQMdI34FryWjN3zQiLr3n4ZOoo6DwGZNLlGT-fJH5UgZUyXFf6WEnfHeeuffbjAACRIY7g6iMK7eU-jq4yy3jGftR2P8hqHpskYzDXIQS6QeBuwell9ekgeC_K5JBT2TO2Jg1FyfMki3qkhnlj3QDLa1c313w3WPa-zqQBBYO-L-gIPdxGvexm17-ESm--OCUwrEZqsgMD67e5-1EW1QaW06zDGK6-CIJ5g4jg9A-NSgPikUGWtbXG2eDQswgobRd-cCoJi2xIOLtdlPwIvetvEWn_fCUaq0qPHRMkYcUgEw-SmNDUJDsiLlkg6YEaAXmD4hGFo9-eZIczpbwXFM3eJwaWyH16vAAk6CGQrNX_85RHPLWGdo3sM2izQNPmMQ_iN1kwLh2NcAYXq-q1txDBdeSupcMQoMwfRI0YBPhWefasFbkSXGaoKDy3FAOso2SdK7Aj4mrI67hSsS3XyKa3vXc0t5B7Yd40Bnzd7Tf6tQwpVklcugaVEW87oFH8nGbyypDJKm9qZB0vdstONJF9oytNvC22JUPWx8cP-9XXq_dcUc9lREw-4zaxjg1C5eTUcwuGdpmDAiTxPJhsnwmTBtGp5fapbwC0GfHsV7OKkQ2ujnV-BODoOYo3ILCjbMEgMm0ZaBpi6C6U9y4xW2qjryNqDz65sJnL1bqZ-w63yGYjrqncO45tWjjGNv0B89qwAENjzHNf2DcolXlVaFm00)
+```
 
 **Диаграмма компонентов (Components)**
 
-Добавьте диаграмму для каждого из выделенных микросервисов.
+```aiignore
+@startuml
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Component.puml
+' uncomment the following line and comment the first to use locally
+' !include C4_Component.puml
+
+title Диаграмма компонентов
+
+Container(user_interface, "Мобильное приложение", "Позволяет пользователю использовать умный дом")
+System_Ext(датчик, "Датчик")
+Container(controller_smart_houses, "Контроллер умных домов", "Агрегирует, сохраняет данные о датчиках")
+
+Container_Boundary(api, "API Application персонального умного дома") {
+    Component(круд_датчиков, "Круд датчиков", "MVC Rest Controller", "Позволяет пользователям выполнять круд операции с датчики")
+    Component(модуль_опроса_датчиков, "Модуль опроса датчиков", "Опрашивает датчики")
+    Component(клиент, "Клиент", "Обеспечивает обмен именформации между персональным умном домом и серверами компании") 
+
+    Rel(круд_датчиков, клиент, "Uses")
+    Rel(модуль_опроса_датчиков, клиент, "Uses")
+}
+
+Rel(user_interface, круд_датчиков, "Uses", "JSON/HTTPS")
+Rel(user_interface, модуль_опроса_датчиков, "Uses", "JSON/HTTPS")
+Rel(модуль_опроса_датчиков, датчик, "Uses")
+Rel(клиент, controller_smart_houses, "Uses", "JSON/HTTPS")
+
+@enduml
+```
+
+```markdown
+[PlantUml_Container_diagram_C4](https://uml.planttext.com/plantuml/png/bLJBJjj05DtxAwRPD4X0Dbrr1OqgjLLf4OzkBPCOOcdya3qHHLMbG4kfL5IwO5MXzXTC4aCQal0BCt_KSyV6Ja90IYmvCtVkuvnpxtWb4bOecYutdZXUZJVhDci84KJFAvNGsb_USqIZkTECxB3cUyBsn7BDToi1jpoAMOf4dJixbUgpfNKoRQ-zhRXM9EmG9hFgku7lKKn0-P-ofeTW5mOc6ZRRzJdtznrlZt77ivdbrTd4iHD6MFaCnHdtQnRd1yYHexnVm12Eu3QJvx8dOzbHBRm7U68c-tA4nItUGvd8eJh2gcqOLN2oK3mi4qFJ0SDmrwhPYwmaB-1oYKmtwXH18vamUOkKC61pHLcmJaha-XUMQzd6-qQToKGTCLsA8g-fa8nHCC7-9vCzTNZ_K9qozGK0X-g7_CTabz2M5epD0qZfcYy_YZ9iv7U2cdqgULviuLZme2w541Pi8XUDDHi-g4KKyflO8wX5rV4agfLNLSTPLKAaEVtI0YQo0yGjk87L8WFsaJhMmWxlc7Pfev53eH4R1uhLCT0LyCmNVjEhM-51sGeSL5bTVyrMWu0xDKiulaUo0HLLGSeubxw3l2dIR9DXZKiBx9F1yCideIpx6cxNd002Lbg2z8nDdn7ZjGzLjc5ZvAgvXFCrzqmEc6n31trC0kd6tW62E2az17n3uHxKd0JIWrPJPAWVNKIZcadnr3p84yzaTr4uit7dcNJb7-qGg--mWaJUpCVWzC6hbrwWTABoRPRo4caEDSsJyRHqamRaYFbF5-ehiBMeXvaOsdn5-6TE0MGT53CmAAOLIr9I2zjEvOMzLrpvM5zKa666fhDXyyU6P8hZDYvFfeCEdACXipDzDWnADFszUMniTIJ-tso-VrTvjRMrleayCvFCCouFPfsBu-HdAUEOIZpE_k7FqamOnehjrV59_my0)
+```
+
+```aiignore
+@startuml
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Component.puml
+' uncomment the following line and comment the first to use locally
+' !include C4_Component.puml
+
+title Диаграмма компонентов
+
+Container(персональный_умный_дом, "Персональный умный дом", "система умного дома пользователя")
+ContainerDb(db, "База данных", "PostgresSQL", "Хранилище данных")
+
+Container_Boundary(api, "API Application контроллер умных домов") {
+    Component(круд_датчиков, "Круд датчиков", "MVC Rest Controller", "Позволяет серверам персонального умного дома управлять датчиками")
+    Component(контроллер_данных_датчиков, "Контроллер данных датчиков", "Используется для обработки данных самих датчиков")
+}
+
+Rel(персональный_умный_дом, круд_датчиков, "Uses", "JSON/HTTPS")
+Rel(персональный_умный_дом, контроллер_данных_датчиков, "Uses", "JSON/HTTPS")
+
+Rel(контроллер_данных_датчиков, db, "Read & write to", "JDBC")
+Rel(круд_датчиков, db, "Read & write to", "JDBC")
+
+
+@enduml
+```
+
+```markdown
+[PlantUml_Container_diagram_C4](https://uml.planttext.com/plantuml/png/dLJBRjD05DtxAovPG2BHUiEALTjq0QY5aBHi8oSU4akJiMLF55K8gGzL2BLIXCG2iM75FaqJDIGa_ONn7t6ktQP9Qq1jBDcJkO_pc6klHTe9TRibhKUUgiksAwYfTH0zj-tGwQmsFDrirzgH2Ek-qaBfrRhViWFfAAvPYRGhlPfTVBPIugtTxIsxvKHQXDYg5lrMu2kk2RZ_4seh5BUmGRefwBqlfT_nL8EafmGvogMbi1T6MFa4S99-tP5o3ptcBEy2MDhJKf3vQaQcPyxZVTn_u-gH6PiP5fUuJytGJED3hFgMLOGc1-1X7h5Xl1yV91azCubFaNLYVbNZ8nIcIpFWBayfPtva9zDDCgN9EMGZRnGV07AOS4bp43mtiwiiPiZSkD45CpEz97qITtE56vARjRnRO_Wl0BtWeW4MKmQCZncfv4Uw4OgeydQB_vgVYGLJs341XSzck5nHM32Wkk6tbUk4Utady52xNdf9wq4WlRgZFL-b3i8tT0HFN31WBZS-lXO2xha2VR08l_dfvCqORXsP0Ji8PV4dCE9-VIRvFOtHxHWhs7vNfBB0633F4FCYmbpg_mm6z1FBkg1oI30PZB0rJ8-TiWxqolJi4y3kPLBRvwPWShfCYMTf1CzkIxlhItNHvMpD6MOk5cMQORv1pNnCG1UwCLTTJfxmOsRE4W5dPeRn6PlHSazK9ngosXUiZvPL5l9Uxy6_ZdKt4X6JVbLvyzf-iRDJgW3Z_W0FC3SJEOL-GBlaXIiBnwN7r0azBV15IhflRXIl5VtTXlzKMzQQK2u-NNy0)
+```
 
 **Диаграмма кода (Code)**
 
