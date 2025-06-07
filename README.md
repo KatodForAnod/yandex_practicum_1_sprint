@@ -181,7 +181,29 @@ Rel(круд_датчиков, db, "Read & write to", "JDBC")
 [PlantUml_Container_diagram_C4](https://uml.planttext.com/plantuml/png/dLJBRjD05DtxAovPG2BHUiEALTjq0QY5aBHi8oSU4akJiMLF55K8gGzL2BLIXCG2iM75FaqJDIGa_ONn7t6ktQP9Qq1jBDcJkO_pc6klHTe9TRibhKUUgiksAwYfTH0zj-tGwQmsFDrirzgH2Ek-qaBfrRhViWFfAAvPYRGhlPfTVBPIugtTxIsxvKHQXDYg5lrMu2kk2RZ_4seh5BUmGRefwBqlfT_nL8EafmGvogMbi1T6MFa4S99-tP5o3ptcBEy2MDhJKf3vQaQcPyxZVTn_u-gH6PiP5fUuJytGJED3hFgMLOGc1-1X7h5Xl1yV91azCubFaNLYVbNZ8nIcIpFWBayfPtva9zDDCgN9EMGZRnGV07AOS4bp43mtiwiiPiZSkD45CpEz97qITtE56vARjRnRO_Wl0BtWeW4MKmQCZncfv4Uw4OgeydQB_vgVYGLJs341XSzck5nHM32Wkk6tbUk4Utady52xNdf9wq4WlRgZFL-b3i8tT0HFN31WBZS-lXO2xha2VR08l_dfvCqORXsP0Ji8PV4dCE9-VIRvFOtHxHWhs7vNfBB0633F4FCYmbpg_mm6z1FBkg1oI30PZB0rJ8-TiWxqolJi4y3kPLBRvwPWShfCYMTf1CzkIxlhItNHvMpD6MOk5cMQORv1pNnCG1UwCLTTJfxmOsRE4W5dPeRn6PlHSazK9ngosXUiZvPL5l9Uxy6_ZdKt4X6JVbLvyzf-iRDJgW3Z_W0FC3SJEOL-GBlaXIiBnwN7r0azBV15IhflRXIl5VtTXlzKMzQQK2u-NNy0)
 ```
 
-**Диаграмма кода (Code)**
+```aiignore
+@startuml
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Sequence.puml
+
+Container(Мобильное_приложение, "Мобильное приложение", "Приложение для управления умным домом")
+
+Container_Boundary(Персональный_умный_дом, "API Application персонального умнного дома")
+  Component(круд_счетчиков, "Круд счетчиков")
+  Component(клиент_контроллера_умных_домов, "Клиент контроллера умных домов", "Клиент для подключения к серверам компании")
+Boundary_End()
+
+Container(контроллер_умных_домов, "Сервера_компании", "Контроллер умных домов")
+
+Rel(Мобильное_приложение, круд_счетчиков, "Операции со счетчиками", "JSON/HTTPS")
+Rel(круд_счетчиков, клиент_контроллера_умных_домов, "Вызывает CreateSensor()")
+Rel(клиент_контроллера_умных_домов, контроллер_умных_домов, "JSON/HTTPS POST CreateSensor")
+
+@enduml
+```
+
+```markdown
+[PlantUml_Container_diagram_C4](https://uml.planttext.com/plantuml/png/fLHDRzD04BttLomvEHADBvmujKH8BQ8qmk6ySkqLjUIiZRqMujOF0GSGI1nHHSK_2AO1DstSlp3xZtXhfqwBKpuFZdPdvxrvCs-KjLIvYSf6uSgjG7fXvWksgrISthNjn7tUUngetMmdIqNYHL89gNfUDBBZq9K6ivegFmnsxFwTrO49FTbwQ8_SL8a48Uw8PvcGdkZ5Xdwb3m8ta2Anw8XA-a85dUctDCDvmkb2xva0BjzeWc11azkiqyvaop8x9lMu7MTq0kHxfWyhr9Xol5TlTV2SPleDdPkq4XTydUuLeVnUb4dVJLvOT4mJlQVtaJ83JQK6o5FUa9pocWHArWURR3sEmy1pLH19A6w3SVvAvLn3Svth64C5O_re54SI8xTe2lWXdN2zhr-3wm2_1KsHcvl6FzQlhFtQua7xXHc0Fk1L1WwOIudmcT58uwOX_P8tKwchBB1iEPOji8k9vfqMkFO4KobnX2JzpkYUkq9Jz57nvJMhiMTQaLtWOcmjqDQbC_o-zAtkjULQektchZvVBSLRXMhjBRuREeMEnoByy_N-ZQ-VwiMXiNvbn9Yvb3-RZF7KCXyusu_iZU5mu416fU9NvF-r2H-mxj_nvQWENjPFXAk48sGQ9LQtAV_F5VxAmKNVRB3j3A-9COQi2UdZx-S7)
+```
 
 Добавьте одну диаграмму или несколько.
 
@@ -193,7 +215,9 @@ Rel(круд_датчиков, db, "Read & write to", "JDBC")
 
 ### 1. Тип API
 
-Укажите, какой тип API вы будете использовать для взаимодействия микросервисов. Объясните своё решение.
+Для общения между сервисами будет использоваться REST API так как вызовы API планируются без сохранения
+состояния (statelessness) и для использовании многоуровней системы. Способ передачи информации будет на основе JSON так он 
+структурирован и понятен человеку.
 
 ### 2. Документация API
 
