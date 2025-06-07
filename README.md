@@ -221,8 +221,13 @@ Rel(клиент_контроллера_умных_домов, контролл�
 
 ### 2. Документация API
 
-Здесь приложите ссылки на документацию API для микросервисов, которые вы спроектировали в первой части проектной работы.
-Для документирования используйте Swagger/OpenAPI или AsyncAPI.
+```markdown
+[Swagger_personal_smart_house](https://github.com/KatodForAnod/yandex_practicum_1_sprint/blob/warmhouse/api/swagger/personalSmartHouse/swagger_personal_smart_house.yaml)
+```
+
+```markdown
+[Swagger_controller_smart_houses](https://github.com/KatodForAnod/yandex_practicum_1_sprint/blob/warmhouse/api/swagger/controllerSmartHouses/swagger_controller_smart_houses.yaml)
+```
 
 # Задание 5. Работа с docker и docker-compose
 
