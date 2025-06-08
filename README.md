@@ -209,7 +209,53 @@ Rel(клиент_контроллера_умных_домов, контролл�
 
 # Задание 3. Разработка ER-диаграммы
 
-Добавьте сюда ER-диаграмму. Она должна отражать ключевые сущности системы, их атрибуты и тип связей между ними.
+```aiignore
+@startuml
+
+' hide the spot
+' hide circle
+
+' avoid problems with angled crows feet
+skinparam linetype ortho
+
+entity "Персональный умный дом" as e01 {
+  *id : number <<generated>>
+  --
+  *name : text
+  *description : text
+  *user_id: number <<FK>>
+  *sensor_id: number <<FK>>
+}
+
+entity "Пользователь" as e02 {
+  *id : number <<generated>>
+  --
+  *fio : text
+  *house_id: number <<FK>>
+}
+
+entity "Датчик" as e03 {
+  *id : number <<generated>>
+  --
+  *name : text
+  *type : type
+  *location: text
+  *value: double
+  *unit: text
+  *status: text
+  *last_updated: timestamp
+  *created_at: timestamp
+}
+
+e01 }|..|| e02
+e01 ||..o{ e03
+
+@enduml
+```
+
+```markdown
+[PlantUml_ER_diagram](https://uml.planttext.com/plantuml/png/dLBBQW8n5DtFLrpS50IbZvs8kEgc7o5nSdL2CycGtD6A8_InwA9TTjzVa5BfI_s6p1yr6InEeT3IrSsvvv9pxgDlYHdAKnb51v08Za09WiqqVU5Oc5XYeDb42mwPqKE9gOMfe0IO6ala41izjJ12fCYU2vKnmrAGGY7DCWHjAD5HX8e4pQ3X7jsgl2oltDPjtD9zbFTkKzwvDoXlt7htTC-UNJU0MS338vX704qltW6LfqCqqEsEKQ5XXBpNysIh5IeKIz7N45vGW1njR4H6GgjQDhTe1eBNlZezg_veMbHM_yGjlfdVLfPVV7noo_BQhGBUMJt-gzMHq3LFYVQkVX5-26BbhNjrxpknat_EfLgAXpu4A7NCmeps1HCcS-m0rxbVTJKp9MXF-vkXtEwnP9O6USQ3gi-A57r5cWKgDXYo0qPr8hJbjxeesksY25EhOE6XdeU-egYFYeUh_0G0)
+```
 
 # Задание 4. Создание и документирование API
 
@@ -223,10 +269,6 @@ Rel(клиент_контроллера_умных_домов, контролл�
 
 ```markdown
 [Swagger_personal_smart_house](https://github.com/KatodForAnod/yandex_practicum_1_sprint/blob/warmhouse/api/swagger/personalSmartHouse/swagger_personal_smart_house.yaml)
-```
-
-```markdown
-[Swagger_controller_smart_houses](https://github.com/KatodForAnod/yandex_practicum_1_sprint/blob/warmhouse/api/swagger/controllerSmartHouses/swagger_controller_smart_houses.yaml)
 ```
 
 # Задание 5. Работа с docker и docker-compose
