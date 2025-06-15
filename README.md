@@ -268,7 +268,7 @@ e01 ||..o{ e03
 ### 2. Документация API
 
 ```markdown
-[Swagger_personal_smart_house](https://github.com/KatodForAnod/yandex_practicum_1_sprint/blob/warmhouse/api/swagger/personalSmartHouse/swagger_personal_smart_house.yaml)
+[Swagger_personal_smart_house]((./api/swagger/personalSmartHouse/swagger_personal_smart_house.yaml))
 ```
 
 # Задание 5. Работа с docker и docker-compose
