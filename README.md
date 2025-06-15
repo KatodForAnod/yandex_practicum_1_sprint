@@ -98,6 +98,10 @@ title Диаграмма контейнеров
 Person(Пользователь, "Пользователь", "Пользователь использующий умный дом")
 System(Персональный_Умный_дом, "Персональный_Умный_до", "Позволяет управлять отоплением в доме и проверять температуру, добавлять новые датчики")
 System(Контроллер_умных_домов, "Контроллер_умных_домов", "Агрегирует информацию с умных домов")
+System(Kafka, "Брокер сообщений", "Агрегирует информацию со светчиков через персональный умный дом")
+System(Сервис_сценариев_умного_дома, "Сервис сценариев умного дома", "Обработка тригеров для запуска сценария")
+System(Управление_пользователями, "Сервис управления пользователями", "Обработка пользовательских данных")
+System(Api_gateway, "Api gateway", "Дробление запросов и распределение по сервисам")
 
 
 System_Ext(Датчик, "Датчик", "Датчик отслеживающий температуру помещения")
@@ -105,15 +109,25 @@ System_Ext(Датчик_х, "Датчик_х", "Отслеживание каи�
 System_Ext(База_данных, "База данных", "Хранит информацию о датчиках и пользователях")
 
 Rel(Пользователь, Персональный_Умный_дом, "Управление отоплением/проверка температуры/CRUD операции с датчиками")
+
+Rel(Персональный_Умный_дом, Api_gateway, "api call")
+
+
+
 Rel_Neighbor(Персональный_Умный_дом, Датчик, "Получает данные о температуре")
 Rel_Neighbor(Персональный_Умный_дом, Датчик_х, "Получает данные")
-Rel(Персональный_Умный_дом, Контроллер_умных_домов, "Отправляет/Получает необходимые данные")
+Rel(Api_gateway, Контроллер_умных_домов, "Отправляет/Получает необходимые данные")
 Rel(Контроллер_умных_домов, База_данных, "Сохраняет/Обновляет/Получает информацию о датчиках/умных домах")
+Rel(Api_gateway, Kafka, "Получение информации со счетчиков и обработка сценариев")
+Rel(Kafka, Сервис_сценариев_умного_дома, "Подписка на данные со счетчиков")
+Rel(Сервис_сценариев_умного_дома, Контроллер_умных_домов, "Активация датчика/элемента умного дома")
+Rel(Api_gateway, Управление_пользователями, "Регистрация/Активация персонального умного дома")
+Rel(Управление_пользователями, База_данных, "Сохраняет/Обновляет пользовательскую информацию")
 @enduml
 ```
 
 ```markdown
-[PlantUml_Container_diagram_C4](https://uml.planttext.com/plantuml/png/hPN1Jjj048RlVefjBWK9uajFFI7HtjeAKN6sGk8cbXmRsHi1jq2QLXK8Mgcd7gWgrBiRS0aa3gym-qRzPvqOnmaHaQf8IJoxC_FDlpFhZL1M0jbgkiOpnwkwhPej6bBkXIzDCwZib-kERBHsMw4TL7rFsfuiL_sckUTMFFPP3sNDTNRDpHVhMspQUVl6R5P2QGSmMPliSI3BUnpzkMXvS6qYX90DMtpmNTVVTxowS1tF5XMl9gQMdI34FryWjN3zQiLr3n4ZOoo6DwGZNLlGT-fJH5UgZUyXFf6WEnfHeeuffbjAACRIY7g6iMK7eU-jq4yy3jGftR2P8hqHpskYzDXIQS6QeBuwell9ekgeC_K5JBT2TO2Jg1FyfMki3qkhnlj3QDLa1c313w3WPa-zqQBBYO-L-gIPdxGvexm17-ESm--OCUwrEZqsgMD67e5-1EW1QaW06zDGK6-CIJ5g4jg9A-NSgPikUGWtbXG2eDQswgobRd-cCoJi2xIOLtdlPwIvetvEWn_fCUaq0qPHRMkYcUgEw-SmNDUJDsiLlkg6YEaAXmD4hGFo9-eZIczpbwXFM3eJwaWyH16vAAk6CGQrNX_85RHPLWGdo3sM2izQNPmMQ_iN1kwLh2NcAYXq-q1txDBdeSupcMQoMwfRI0YBPhWefasFbkSXGaoKDy3FAOso2SdK7Aj4mrI67hSsS3XyKa3vXc0t5B7Yd40Bnzd7Tf6tQwpVklcugaVEW87oFH8nGbyypDJKm9qZB0vdstONJF9oytNvC22JUPWx8cP-9XXq_dcUc9lREw-4zaxjg1C5eTUcwuGdpmDAiTxPJhsnwmTBtGp5fapbwC0GfHsV7OKkQ2ujnV-BODoOYo3ILCjbMEgMm0ZaBpi6C6U9y4xW2qjryNqDz65sJnL1bqZ-w63yGYjrqncO45tWjjGNv0B89qwAENjzHNf2DcolXlVaFm00)
+[PlantUml_Container_diagram_C4](https://uml.planttext.com/plantuml/png/hLTDJnDH5DttLppPg0ao6rUkCEZAZnYDwya08qoSJaax3RAZL3G654XOkL29SJyKHqfforzuxnzvxdtpFTE6eY4fdVVUlUVSZ_FkTB7bMqs_NNThjnnlnMslscBTzpTQ3moZQMqkh3d-UdkvtRARAmtFjpr_OQLHDpPSooERUor_rNMMZQNxzrxGqkjdJuswrVBj9fRC9R9uvoziaFVRekt1j0uNmb-tnPk6wpOs7MzDk8vd2yjR5Rbjfzd2juO0j70RAvRhRi57mh7elkOxlciBUIpxCf1dQXkVG_m5GWxaM8xKZWpbXHp945jZsQlLNjZDLiEx8x_ZyLBjotDQbW4VnFEyc9kqDJTbJyY-wiYhU5DrrHVr2PmkXEg2paZjuQlyZVtXtDtQgotagauSG0js80hUPCa7JVapjZ6rZKQ-rk64vJdu4Pq3sEqGZIlEJe-Mr0vH7eFz6AGl4SC8P4Cv5B8NqPGXOX9iH94IjZRZa8SmevGY0OXrMtNdjTbf7c54jg0MqYwT_GYOWUndSl1LbubXBecAsZRZdAdTA7voGt5T-p1duP0R8fHdA0ueSXw0FrBl4VesTOdwWAqlGdL4waLal2GqdrXltbhayuYn1uGik1Y86PNM2RoO5LQEwOEo6wS6g09VG_PmBdIQorMVsbOdRDwZbZHL1s34Bi0IbRWN9GmsPt8SfomWuXaxKROJMRiuIG57_0qveDuwvPOQG7rSepvEHhgZy-WAWQuCq5DTHCJ7SYZg81F4pxHVu_OqKu7br7S08lrI0DsY0uAVuc1291DCzZc2lcwN0EwvTrB-3pSSSytoxKrh2txn9A8dXZdch9oceSM9mJ8NkqVYOtrrU3K4IfWzVgLR9ucNxZsWro9yy_4x_mvknKHpZ9e-pXMU-JA05qBuWmKADBd1AWMl4uDh8kx-JFLAwARQBG1YHIUy21i7YDphz5xYtpvrtA0W_aXTSgXLszC9OlUZ0fKZE4E2pMojMCrwFLz3slZ5NK1HJT2kba1wfGL4eJ-nmRWrQYzjTyhWcMqSLEYZyaOtibTufCsAUkuPIozVFn9ihTSH9_LWfn0dIoMDvTgCyuAm80WQxjoovCjyRZjhwykDvanEYnskSzl5Gg2ltQIkd9tAq6K84l-5GTJbqqXegFpjCDi8X62oavmGZ38aNdXuCktYypUu3PCXN60o2_X46PsWyNQrOc96k4Zrz9z2yfgwCigpEM0zbJAPJEaKAf562OoRcszHdhVP0Kn27fTdMcaaHXmYs1lFtUzSf2k-nddaZ79N4jXF81hNy6R0i_NTeHmW3teoVD33D5SdGttcQsT8u3WPJ7XVg1B0JMRzZ-WDgyC1H9oCAfeLhr0HgMaCRq3gd_GnzKM3VazKwWLa5srl5J-5_W80)
 ```
 
 **Диаграмма компонентов (Components)**
@@ -128,27 +142,32 @@ title Диаграмма компонентов
 
 Container(user_interface, "Мобильное приложение", "Позволяет пользователю использовать умный дом")
 System_Ext(датчик, "Датчик")
-Container(controller_smart_houses, "Контроллер умных домов", "Агрегирует, сохраняет данные о датчиках")
+Container(api_gateway, "Api gateway", "")
 
 Container_Boundary(api, "API Application персонального умного дома") {
     Component(круд_датчиков, "Круд датчиков", "MVC Rest Controller", "Позволяет пользователям выполнять круд операции с датчики")
     Component(модуль_опроса_датчиков, "Модуль опроса датчиков", "Опрашивает датчики")
     Component(клиент, "Клиент", "Обеспечивает обмен именформации между персональным умном домом и серверами компании") 
+    Component(producer, "Producer", "Отправляет информцию со счетчиков")
+    Component(репозиторий, "Репозиторий (локальное хранилище)", "Хранение последних данных со счетчиков") 
 
     Rel(круд_датчиков, клиент, "Uses")
     Rel(модуль_опроса_датчиков, клиент, "Uses")
+    Rel(модуль_опроса_датчиков, репозиторий, "Uses")
+    Rel(модуль_опроса_датчиков, producer, "Uses")
+    Rel(producer, клиент, "Uses")
 }
 
 Rel(user_interface, круд_датчиков, "Uses", "JSON/HTTPS")
 Rel(user_interface, модуль_опроса_датчиков, "Uses", "JSON/HTTPS")
 Rel(модуль_опроса_датчиков, датчик, "Uses")
-Rel(клиент, controller_smart_houses, "Uses", "JSON/HTTPS")
+Rel(клиент, api_gateway, "Uses", "JSON/HTTPS")
 
 @enduml
 ```
 
 ```markdown
-[PlantUml_Container_diagram_C4](https://uml.planttext.com/plantuml/png/bLJBJjj05DtxAwRPD4X0Dbrr1OqgjLLf4OzkBPCOOcdya3qHHLMbG4kfL5IwO5MXzXTC4aCQal0BCt_KSyV6Ja90IYmvCtVkuvnpxtWb4bOecYutdZXUZJVhDci84KJFAvNGsb_USqIZkTECxB3cUyBsn7BDToi1jpoAMOf4dJixbUgpfNKoRQ-zhRXM9EmG9hFgku7lKKn0-P-ofeTW5mOc6ZRRzJdtznrlZt77ivdbrTd4iHD6MFaCnHdtQnRd1yYHexnVm12Eu3QJvx8dOzbHBRm7U68c-tA4nItUGvd8eJh2gcqOLN2oK3mi4qFJ0SDmrwhPYwmaB-1oYKmtwXH18vamUOkKC61pHLcmJaha-XUMQzd6-qQToKGTCLsA8g-fa8nHCC7-9vCzTNZ_K9qozGK0X-g7_CTabz2M5epD0qZfcYy_YZ9iv7U2cdqgULviuLZme2w541Pi8XUDDHi-g4KKyflO8wX5rV4agfLNLSTPLKAaEVtI0YQo0yGjk87L8WFsaJhMmWxlc7Pfev53eH4R1uhLCT0LyCmNVjEhM-51sGeSL5bTVyrMWu0xDKiulaUo0HLLGSeubxw3l2dIR9DXZKiBx9F1yCideIpx6cxNd002Lbg2z8nDdn7ZjGzLjc5ZvAgvXFCrzqmEc6n31trC0kd6tW62E2az17n3uHxKd0JIWrPJPAWVNKIZcadnr3p84yzaTr4uit7dcNJb7-qGg--mWaJUpCVWzC6hbrwWTABoRPRo4caEDSsJyRHqamRaYFbF5-ehiBMeXvaOsdn5-6TE0MGT53CmAAOLIr9I2zjEvOMzLrpvM5zKa666fhDXyyU6P8hZDYvFfeCEdACXipDzDWnADFszUMniTIJ-tso-VrTvjRMrleayCvFCCouFPfsBu-HdAUEOIZpE_k7FqamOnehjrV59_my0)
+[PlantUml_Container_diagram_C4](https://uml.planttext.com/plantuml/png/hLNBRjD05DtxAoxPa4gqsR1YrH8X0Q8GzS7MSXEtjUJObkseH0Yf3qf1L7JJ5Qg03NitZLitJT9VcFaZpXsxSPAcHH6qqcJcpdsSS-REU3u83Jzir6tjWULKxKRDfCqmz88dfP9lRCrjME5cOwqHc7xLTKBJ2UUgRhtasOR3CRD1MBEjjLBvyMo5JQkBhqfr8mXD7oQzxDOzr-4OZ_C_f8Q3u3eC56wQjExQjhjbEHjaMuv9XbEZaMtB3p1p2SN9Tgk6RJUHOu3oTW4jj4BR974i4X69CxcDiOl_Y4H7z36vnjWJiUZ9NSnQcbO69mF5_I8pr2qmzDUDglc82k84BgV8T2KF4TGNCObhf8G1YtFEWdbSODUVi5o85iOhUIHYkKkg54TUS24HeM2CzJSIYTovlIaFIUu1O4z-5PSaseosCACjDo5bNN_sBYp2ndu7gDdXaiVv4euv3yEpz0qZDBUC9jmMF8ko5GE5P-wgFtKRJitmcnp3lfKNjE1vjbKrGijrc48iju6MDOi6Cfo9VeOrMwHeHLIOeVSQuMzmAaNHGO8zqTQ7qJDdPl0ztQFnFGQw-BPCIoQEdz7ww1FJdqxe8z4bqOAQQXkw7YcHRm0Hh8eU0ZwXS49oPnH80gt6o7GHr4OqgkaSZ-W-v8aciZl9dMdOUI9TyKCvHF8ph22HCliBd0vu9MapApdpPPRo56bs5Cs3uRJSrLrsH2-c4_aHsBRv33CnbFcSyK_i0iZQpNkWUzC1QifAAc5RgRom9_drYzIb0HaQO-FvRgrHDNqWhsJJb0NEKqc3V8CZJtB831YtYl5X0D5uHDjnqH0IgvQuGDYkIf68IoxqQz865TLbxmorVqnoN-7fgPSWaLz4FAEW_ixCsSEWEXEuhc1eiqdkgoF5509YSITcqXJg9TE-xmADdVzgO0OPNHKuHRF-lqntoliFEOSwOonBlZEPmGTDOxVnb_s-Hqb5ulVbyflNfUShAvLbv9cOP9h7uCwiKvtIw0SWuvWsoJ3xqG_0nDBQlEdKyC7y0m00)
 ```
 
 ```aiignore
@@ -160,11 +179,13 @@ Rel(клиент, controller_smart_houses, "Uses", "JSON/HTTPS")
 title Диаграмма компонентов
 
 Container(персональный_умный_дом, "Персональный умный дом", "система умного дома пользователя")
+Container(сервис_сценариев_умного_дома, "Сервис сценариев умного дома", "обработка сценариев")
 ContainerDb(db, "База данных", "PostgresSQL", "Хранилище данных")
 
 Container_Boundary(api, "API Application контроллер умных домов") {
     Component(круд_датчиков, "Круд датчиков", "MVC Rest Controller", "Позволяет серверам персонального умного дома управлять датчиками")
     Component(контроллер_данных_датчиков, "Контроллер данных датчиков", "Используется для обработки данных самих датчиков")
+    Component(компонент_вкл_выкл_приборов, "Вкл/выкл приборов", "Используется для вкл выкл приборов персонального умного дома")
 }
 
 Rel(персональный_умный_дом, круд_датчиков, "Uses", "JSON/HTTPS")
@@ -172,13 +193,15 @@ Rel(персональный_умный_дом, контроллер_данны�
 
 Rel(контроллер_данных_датчиков, db, "Read & write to", "JDBC")
 Rel(круд_датчиков, db, "Read & write to", "JDBC")
+Rel(сервис_сценариев_умного_дома, компонент_вкл_выкл_приборов, "Uses")
+Rel(компонент_вкл_выкл_приборов, персональный_умный_дом, "Uses")
 
 
 @enduml
 ```
 
 ```markdown
-[PlantUml_Container_diagram_C4](https://uml.planttext.com/plantuml/png/dLJBRjD05DtxAovPG2BHUiEALTjq0QY5aBHi8oSU4akJiMLF55K8gGzL2BLIXCG2iM75FaqJDIGa_ONn7t6ktQP9Qq1jBDcJkO_pc6klHTe9TRibhKUUgiksAwYfTH0zj-tGwQmsFDrirzgH2Ek-qaBfrRhViWFfAAvPYRGhlPfTVBPIugtTxIsxvKHQXDYg5lrMu2kk2RZ_4seh5BUmGRefwBqlfT_nL8EafmGvogMbi1T6MFa4S99-tP5o3ptcBEy2MDhJKf3vQaQcPyxZVTn_u-gH6PiP5fUuJytGJED3hFgMLOGc1-1X7h5Xl1yV91azCubFaNLYVbNZ8nIcIpFWBayfPtva9zDDCgN9EMGZRnGV07AOS4bp43mtiwiiPiZSkD45CpEz97qITtE56vARjRnRO_Wl0BtWeW4MKmQCZncfv4Uw4OgeydQB_vgVYGLJs341XSzck5nHM32Wkk6tbUk4Utady52xNdf9wq4WlRgZFL-b3i8tT0HFN31WBZS-lXO2xha2VR08l_dfvCqORXsP0Ji8PV4dCE9-VIRvFOtHxHWhs7vNfBB0633F4FCYmbpg_mm6z1FBkg1oI30PZB0rJ8-TiWxqolJi4y3kPLBRvwPWShfCYMTf1CzkIxlhItNHvMpD6MOk5cMQORv1pNnCG1UwCLTTJfxmOsRE4W5dPeRn6PlHSazK9ngosXUiZvPL5l9Uxy6_ZdKt4X6JVbLvyzf-iRDJgW3Z_W0FC3SJEOL-GBlaXIiBnwN7r0azBV15IhflRXIl5VtTXlzKMzQQK2u-NNy0)
+[PlantUml_Container_diagram_C4](https://uml.planttext.com/plantuml/png/dLLDRzD04BtxLomvG2hH-iA9Kzlq0AY5q0-kbXClYQMDRTaRHHL2IbiLXAXKWJWWBeW3zpHDr92Gv2-i_n5lracQ3nSrYQLujJllpNipOtipadOegnLXF72zegWwd9Mb3AAdfXdQjOsIAylLGZNYOT7t9FVaHj6lc86mFSAiHz8HRi7CFLdFqzRHtgvPiIF9GsnPERyI-1vX0k9_nAeUm1LiC5dcxAqlX5zplH8JhiUPxJbivjWD8wnyXkHC-4LRY6DmJ5Gk9Z2aAmLdwflgg8QwZklu_ukhmLHN3R0Ouh-lsgeVdsBLD8mSFDb87cPnrexhyOcEQAXUV86ep-gF5Py1c2nLYrWUiupwcHxCReDP4fn1DE8wyGbIjhMM90Q7rsemYYA5f8s8RaYPQkZmNdoPMPiI2IRanJ7uB51-82-8hSDmMpMjQMfhJ4rwVztYs28kNH99n-fAb_5A3Q2eI_8NuDCITmfPfq30Bm3TaAyM5dsgINnEZ7a_agMGHmUlTtM2tvg-3wOUr7rIxLd4sbIFh6s_wZbsU9or0nVOhVnpjXK4mYtQqlMzfCbeBHXHIbpmFEb8V3usDY35x9t1y9iCK5PrqT0prQAoeVZnHoWYlYQ9_96SiVapSh3t9iVsEIQLT8OOQHvcaX4Pe01DtTLBI3bba-wraybaQJCtQaBwa61tgB5D8eMIYrb9DEuTr6pUsc9ThEagftjEAUOqABKOwZlSJ2OPSk4R0tD9mJswpSzJPvOJQEqXZJxLrimpRQ4kNTN33K-WNWprZ5Ao-jZNLpenno5iFkHUBfe9z2wEfHiBR-yDOv-BfLv3_nlPeuX7PEN5mQkNvhF3m_m1SYoVO8N1ISsSf5w1JhzCzhdji8Ui5hgIuuEWsNUsSsD7TvVX7kWLNwch3P-kpTfjCPObMEeZDKfc69lSS_1v_0S0)
 ```
 
 **Диаграмма кода (Code)**
@@ -200,11 +223,15 @@ Rel(Мобильное_приложение, круд_счетчиков, "Оп�
 Rel(круд_счетчиков, клиент_контроллера_умных_домов, "Вызывает CreateSensor()")
 Rel(клиент_контроллера_умных_домов, контроллер_умных_домов, "JSON/HTTPS POST CreateSensor")
 
+Rel(контроллер_умных_домов, клиент_контроллера_умных_домов, "JSON/HTTPS Response")
+Rel(клиент_контроллера_умных_домов, круд_счетчиков, "Результат CreateSensor()")
+Rel(круд_счетчиков, Мобильное_приложение, "Операции со счетчиками", "JSON/HTTPS")
+
 @enduml
 ```
 
 ```markdown
-[PlantUml_Container_diagram_C4](https://uml.planttext.com/plantuml/png/fLHDRzD04BttLomvEHADBvmujKH8BQ8qmk6ySkqLjUIiZRqMujOF0GSGI1nHHSK_2AO1DstSlp3xZtXhfqwBKpuFZdPdvxrvCs-KjLIvYSf6uSgjG7fXvWksgrISthNjn7tUUngetMmdIqNYHL89gNfUDBBZq9K6ivegFmnsxFwTrO49FTbwQ8_SL8a48Uw8PvcGdkZ5Xdwb3m8ta2Anw8XA-a85dUctDCDvmkb2xva0BjzeWc11azkiqyvaop8x9lMu7MTq0kHxfWyhr9Xol5TlTV2SPleDdPkq4XTydUuLeVnUb4dVJLvOT4mJlQVtaJ83JQK6o5FUa9pocWHArWURR3sEmy1pLH19A6w3SVvAvLn3Svth64C5O_re54SI8xTe2lWXdN2zhr-3wm2_1KsHcvl6FzQlhFtQua7xXHc0Fk1L1WwOIudmcT58uwOX_P8tKwchBB1iEPOji8k9vfqMkFO4KobnX2JzpkYUkq9Jz57nvJMhiMTQaLtWOcmjqDQbC_o-zAtkjULQektchZvVBSLRXMhjBRuREeMEnoByy_N-ZQ-VwiMXiNvbn9Yvb3-RZF7KCXyusu_iZU5mu416fU9NvF-r2H-mxj_nvQWENjPFXAk48sGQ9LQtAV_F5VxAmKNVRB3j3A-9COQi2UdZx-S7)
+[PlantUml_Container_diagram_C4](http://uml.planttext.com/plantuml/png/hLNBRjD05DtdAuQi4ed66rQiMY8aG42Z9gn7RZngBJbZOu-5sBMfW0K899O8KVY3u3OqJHlt5-xy4MViuAGu2Nsmi3Lpxptddlj8l1ufErHnpwlSSMNNYnt1TfKAelkM5Tgl6ZkksestuqY4NLyg8LMZw_UimBEbmQn5ol7SRQjvRwrbJ2-UFRLwTgH421DlYvUna5tH20nzfGa2svKYhD5NIkadZUXCVw09paDE5thF673vHKCOHpIyowhbIBOeicf23yjsHiT0VcBw84CDA84_y-N6SvheztHkmb9Sy5JhSqBv0p-MZXs-hj4X3VMUtaV813IP6Y1FUK5oodCIADbeFMORGU2vNLkvleJYCXZd8qgd6ehhLCS0AXXh-ht0bsXvZSQ07z0nr_lw7RZwU8zeZDZ45FubzxAojyI3yaUc0RhFimWSq9SKvZEZaGP5GVeDBxgIPvbXsM8ics5d7Ksg9N0-4tGbnH6Iz4UZUpeL6gEEZ2_9MSrunXdP1Ivch2EKzMSo_A5qQlLBoxL0s_AgViodugL4kVOItv9AeMDBU5TVxt_CzLk-E3JGRuqOqvVqxo6ZFRdC9-tDvzQZJgVLXenCnIhoMst2Pwpx2Pu4sS7Bcg6mbMWB6VbXhLwalt66QqrmLZThRROxbyGK0xa6uMqwCwTbIqJuqKNYVtHZvP9y1-a9_DWrtSUgB1t7gcsu-l_npNUoiYwaWm_1Rm00)
 ```
 
 # Задание 3. Разработка ER-диаграммы
@@ -247,14 +274,35 @@ entity "Датчик" as e03 {
   *created_at: timestamp
 }
 
+entity "Сценарии" as e04 {
+  *id : number <<generated>>
+  --
+  *name : text
+  *description : text
+  *user_id: number <<FK>>
+  *house_id: number <<FK>>
+  *sensor_id: []numbers <<FK>>
+  *logic: text
+}
+
+entity "Комната" as e05 {
+  *id : number <<generated>>
+  --
+  *name : text
+  *house_id: number <<FK>>
+  *sensor_id: []numbers <<FK>>
+}
+
 e01 }|..|| e02
 e01 ||..o{ e03
+e01 ||..o{ e04
+e01 ||..o{ e05
 
 @enduml
 ```
 
 ```markdown
-[PlantUml_ER_diagram](https://uml.planttext.com/plantuml/png/dLBBQW8n5DtFLrpS50IbZvs8kEgc7o5nSdL2CycGtD6A8_InwA9TTjzVa5BfI_s6p1yr6InEeT3IrSsvvv9pxgDlYHdAKnb51v08Za09WiqqVU5Oc5XYeDb42mwPqKE9gOMfe0IO6ala41izjJ12fCYU2vKnmrAGGY7DCWHjAD5HX8e4pQ3X7jsgl2oltDPjtD9zbFTkKzwvDoXlt7htTC-UNJU0MS338vX704qltW6LfqCqqEsEKQ5XXBpNysIh5IeKIz7N45vGW1njR4H6GgjQDhTe1eBNlZezg_veMbHM_yGjlfdVLfPVV7noo_BQhGBUMJt-gzMHq3LFYVQkVX5-26BbhNjrxpknat_EfLgAXpu4A7NCmeps1HCcS-m0rxbVTJKp9MXF-vkXtEwnP9O6USQ3gi-A57r5cWKgDXYo0qPr8hJbjxeesksY25EhOE6XdeU-egYFYeUh_0G0)
+[PlantUml_ER_diagram](https://uml.planttext.com/plantuml/png/lLJDIYGn4BxtKnHU145HLoyYuicBZo3B43lbTDXqqYJLkk88hWlhGO-Ul8XlC8YYwzyp96zafMsP7b1Mvh2dvAklI7rVLNMlUnAEwb9dsJGKIY9GWU0hI-yuLoxNc6YnQvM4ojbjZQM7FKK52DFNA25tTi_33Y9b_eSobN2Y1AqCqdw5O1qLDilGaA9zc0gNuJOUnL_X9Jo7ONYCP-4vdeQ_47-7f_OQRfXzcWBX0USNu203cE7YAs3gSXiThAxsqQ0JX79jZSdPsPHXH8cSG_YJ4fJeSwSgKjPqehL7rrEoyzJ6PlF6Z4VZxKVSuPZubqRo7P_NOHYFmst2hTJ5hqhTKRQZgR2iwX-5prEnU1BkmqDRxDk4VMc6mf2F1BNDHUhHA65Nw1fNGDgQHztqp2WQqRmpLFiHri9JhwvagifHLI9db5MYSeSfsXFK9Rgshk8VxY0lGZnYQ_UjjQN_DFBF6Z--3LlVtrZVeRNjgxmjqVLpaHQtyNCSXgsRvGdTJAWkoU6Fvd0mDpSOfALiu82XFKXhCmwNnk5obgsZaVnBU0K0)
 ```
 
 # Задание 4. Создание и документирование API
